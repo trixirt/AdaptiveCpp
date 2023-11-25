@@ -233,9 +233,7 @@ class option:
 
 class acpp_config:
   def __init__(self, args):
-    config_file_path = os.path.abspath(
-      os.path.join(self.acpp_installation_path,
-                  "etc/hipSYCL/syclcc.json"))
+    config_file_path = os.path.abspath("/etc/hipSYCL/syclcc.json")
     
     self._config_file = None
     # First check silently if we can open the default config file.
