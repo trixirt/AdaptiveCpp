@@ -144,11 +144,7 @@ std::vector<fs::path> get_plugin_search_paths()
 {
   std::vector<fs::path> paths;
 #ifndef _WIN32
-  Dl_info info;
-  if (dladdr(reinterpret_cast<void*>(&get_plugin_search_paths), &info)) {
-    paths.emplace_back(fs::path{info.dli_fname}.parent_path() / "hipSYCL");
-  }
-  const auto install_prefixed_path = fs::path{HIPSYCL_INSTALL_PREFIX} / "lib" / "hipSYCL";
+  const auto install_prefixed_path = "/usr/lib64/hipSYCL";
 #else
   if(HMODULE handle = GetModuleHandleA(HIPSYCL_RT_LIBRARY_NAME))
   {
