@@ -502,9 +502,9 @@ class acpp_config:
   def _get_rocm_substitution_vars(self):
     return {
       'ACPP_ROCM_PATH' : self.rocm_path,
-      'ACPP_ROCM_LIB_PATH' : os.path.join(self.rocm_path, "lib"),
+      'ACPP_ROCM_LIB_PATH' : os.path.join(self.rocm_path, "lib64"),
       'ACPP_PATH' : self.acpp_installation_path,
-      'ACPP_LIB_PATH' : os.path.join(self.acpp_installation_path, "lib")
+      'ACPP_LIB_PATH' : os.path.join(self.acpp_installation_path, "lib64")
     }
 
   def _get_cuda_substitution_vars(self):
@@ -523,7 +523,7 @@ class acpp_config:
   def _get_omp_substitution_vars(self):
     return {
       'ACPP_PATH' : self.acpp_installation_path,
-      'ACPP_LIB_PATH' : os.path.join(self.acpp_installation_path, "lib")
+      'ACPP_LIB_PATH' : os.path.join(self.acpp_installation_path, "lib64")
     }
 
   def _substitute_template_string(self, template_string, substitution_dict):
@@ -666,7 +666,7 @@ class acpp_config:
 
   @property
   def runtime_backends(self):
-    backend_path = os.path.join(self.acpp_installation_path, "lib", "hipSYCL")
+    backend_path = os.path.join(self.acpp_installation_path, "lib64", "hipSYCL")
     content = os.listdir(backend_path)
     return [c for c in content if os.path.isfile(os.path.join(backend_path, c))]
 
@@ -746,7 +746,7 @@ class acpp_config:
     elif sys.platform == "darwin":
       return os.path.join(self.acpp_installation_path, "lib", "libacpp-clang.dylib")
     else:
-      return os.path.join(self.acpp_installation_path, "lib", "libacpp-clang.so")
+      return os.path.join(self.acpp_installation_path, "lib64", "libacpp-clang.so")
 
   @property
   def sequential_link_line(self):
