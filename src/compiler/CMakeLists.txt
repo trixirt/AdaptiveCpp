@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(acpp-clang)
+include(GNUInstallDirs)
 
 get_filename_component(CLANG_BINARY_PREFIX ${CLANG_EXECUTABLE_PATH} DIRECTORY)
 
@@ -66,6 +67,8 @@ add_library(acpp-clang SHARED
   ${STDPAR_COMPILER}
 )
 
+set_target_properties(acpp-clang PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION})
+  
 target_include_directories(acpp-clang PRIVATE
   ../../include
   ${LLVM_INCLUDE_DIRS}
@@ -104,8 +107,8 @@ else()
 endif()
 
 install(TARGETS acpp-clang
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION bin
-        ARCHIVE DESTINATION lib)
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 add_subdirectory(llvm-to-backend)

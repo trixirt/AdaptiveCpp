@@ -322,19 +322,19 @@ if(APPLE)
   set(DEFAULT_OMP_FLAG "-Xclang -fopenmp")
   
   if(Boost_FIBER_LIBRARY_DEBUG)
-    set(DEFAULT_BOOST_LIBRARIES "${Boost_CONTEXT_LIBRARY_DEBUG} ${Boost_FIBER_LIBRARY_DEBUG} -Wl,-rpath ${Boost_LIBRARY_DIR}")
+    set(DEFAULT_BOOST_LIBRARIES "${Boost_CONTEXT_LIBRARY_DEBUG} ${Boost_FIBER_LIBRARY_DEBUG}")
   else()
-    set(DEFAULT_BOOST_LIBRARIES "${Boost_CONTEXT_LIBRARY_RELEASE} ${Boost_FIBER_LIBRARY_RELEASE} -Wl,-rpath ${Boost_LIBRARY_DIR}")
+    set(DEFAULT_BOOST_LIBRARIES "${Boost_CONTEXT_LIBRARY_RELEASE} ${Boost_FIBER_LIBRARY_RELEASE}")
   endif()
 else()
   set(DEFAULT_OMP_FLAG "-fopenmp")
 endif()
 
 set(DEFAULT_GPU_ARCH "" CACHE STRING "Optional: Default GPU architecture to compile for when targeting GPUs (e.g.: sm_60 or gfx900)")
-set(ROCM_LIBS "-L${ROCM_PATH}/lib -L${ROCM_PATH}/hip/lib -lamdhip64" CACHE STRING "Necessary libraries for ROCm")
+set(ROCM_LIBS "-lamdhip64" CACHE STRING "Necessary libraries for ROCm")
 
 set(DEFAULT_WIN32_CUDA_LINK_LINE "-L$HIPSYCL_CUDA_LIB_PATH -lcudart")
-set(DEFAULT_CUDA_LINK_LINE "-Wl,-rpath=$HIPSYCL_CUDA_LIB_PATH -L$HIPSYCL_CUDA_LIB_PATH -lcudart")
+set(DEFAULT_CUDA_LINK_LINE "-L$HIPSYCL_CUDA_LIB_PATH -lcudart")
 
 if(MINGW)
   set(DEFAULT_LINK_PREFIX "-l:")
@@ -355,12 +355,12 @@ set(DEFAULT_WIN32_SEQUENTIAL_LINK_LINE "-L${Boost_LIBRARY_DIR} ${DEFAULT_LINK_PR
 # need add_subdirectory(src) before this!
 set(DEFAULT_APPLE_OMP_LINK_LINE "${DEFAULT_BOOST_LIBRARIES} ${DEFAULT_OMP_FLAG} ${hipSYCL_OpenMP_CXX_LIBRARIES}")
 set(DEFAULT_APPLE_SEQUENTIAL_LINK_LINE "${DEFAULT_BOOST_LIBRARIES} ${hipSYCL_OpenMP_CXX_LIBRARIES}")
-set(DEFAULT_OMP_LINK_LINE "-L${Boost_LIBRARY_DIR} -lboost_context -lboost_fiber -Wl,-rpath=${Boost_LIBRARY_DIR} ${DEFAULT_OMP_FLAG}")
-set(DEFAULT_SEQUENTIAL_LINK_LINE "-L${Boost_LIBRARY_DIR} -lboost_context -lboost_fiber -Wl,-rpath=${Boost_LIBRARY_DIR}")
+set(DEFAULT_OMP_LINK_LINE "-L${Boost_LIBRARY_DIR} -lboost_context -lboost_fiber ${DEFAULT_OMP_FLAG}")
+set(DEFAULT_SEQUENTIAL_LINK_LINE "-L${Boost_LIBRARY_DIR} -lboost_context -lboost_fiber")
 
 # If no link lines given, set to default.
 if(NOT ROCM_LINK_LINE)
-  set(ROCM_LINK_LINE "-Wl,-rpath=$HIPSYCL_ROCM_PATH/lib -Wl,-rpath=$HIPSYCL_ROCM_PATH/hip/lib ${ROCM_LIBS}" CACHE STRING "Arguments passed to compiler to link ROCm libraries to SYCL applications")
+  set(ROCM_LINK_LINE "${ROCM_LIBS}" CACHE STRING "Arguments passed to compiler to link ROCm libraries to SYCL applications")
 endif()
 
 if(WIN32)
@@ -401,14 +401,14 @@ if(NOT ROCM_CXX_FLAGS)
   # __float128 even though it is not supported for CUDA / HIP,
   # see https://bugs.llvm.org/show_bug.cgi?id=47559.
 
-  set(ROCM_CXX_FLAGS "-isystem $HIPSYCL_PATH/include/AdaptiveCpp/hipSYCL/std/hiplike -isystem ${CLANG_INCLUDE_PATH} -U__FLOAT128__ -U__SIZEOF_FLOAT128__ -I$HIPSYCL_ROCM_PATH/include -I$HIPSYCL_ROCM_PATH/include --rocm-device-lib-path=$HIPSYCL_ROCM_PATH/amdgcn/bitcode --rocm-path=$HIPSYCL_ROCM_PATH -fhip-new-launch-api -mllvm -amdgpu-early-inline-all=true -mllvm -amdgpu-function-calls=false -D__HIP_ROCclr__" CACHE STRING "Arguments passed to compiler to compile SYCL applications with ROCm")
+  set(ROCM_CXX_FLAGS "-isystem /usr/include/AdaptiveCpp/hipSYCL/std/hiplike -U__FLOAT128__ -U__SIZEOF_FLOAT128__ -fhip-new-launch-api -mllvm -amdgpu-early-inline-all=true -mllvm -amdgpu-function-calls=false -D__HIP_ROCclr__" CACHE STRING "Arguments passed to compiler to compile SYCL applications with ROCm")
 endif()
 
 if(NOT CUDA_CXX_FLAGS)	
   # clang erroneously sets feature detection flags for 
   # __float128 even though it is not supported for CUDA / HIP,
   # see https://bugs.llvm.org/show_bug.cgi?id=47559.
-  set(CUDA_CXX_FLAGS "-U__FLOAT128__ -U__SIZEOF_FLOAT128__ -isystem $HIPSYCL_PATH/include/AdaptiveCpp/hipSYCL/std/hiplike" CACHE STRING "Arguments passed to compiler to compile SYCL applications with CUDA")
+  set(CUDA_CXX_FLAGS "-U__FLOAT128__ -U__SIZEOF_FLOAT128__ -isystem /usr/include/AdaptiveCpp/hipSYCL/std/hiplike" CACHE STRING "Arguments passed to compiler to compile SYCL applications with CUDA")
 endif()
 
 # always need -D_ENABLE_EXTENDED_ALIGNED_STORAGE to allow correctly aligned local memory on CPU
@@ -494,7 +494,7 @@ include(GNUInstallDirs)
 
 
 set(HIPSYCL_INSTALL_CMAKE_DIR
-  "lib/cmake/hipSYCL" CACHE PATH "Install path for legacy CMake config files")
+  "${CMAKE_INSTALL_LIBDIR}/cmake/hipSYCL" CACHE PATH "Install path for legacy CMake config files")
 
 # Set relative paths for install root in the following variables so that
 # configure_package_config_file will generate paths relative whatever is
@@ -542,7 +542,7 @@ mark_as_advanced(
 # Legacy module (Open SYCL)
 
 set(OPENSYCL_INSTALL_CMAKE_DIR
-  "lib/cmake/OpenSYCL" CACHE PATH "Install path for CMake config files")
+  "${CMAKE_INSTALL_LIBDIR}/cmake/OpenSYCL" CACHE PATH "Install path for CMake config files")
 
 # Set relative paths for install root in the following variables so that
 # configure_package_config_file will generate paths relative whatever is
@@ -590,7 +590,7 @@ mark_as_advanced(
 
 
 set(ADAPTIVECPP_INSTALL_CMAKE_DIR
-  "lib/cmake/AdaptiveCpp" CACHE PATH "Install path for CMake config files")
+  "${CMAKE_INSTALL_LIBDIR}/cmake/AdaptiveCpp" CACHE PATH "Install path for CMake config files")
 
 # Set relative paths for install root in the following variables so that
 # configure_package_config_file will generate paths relative whatever is

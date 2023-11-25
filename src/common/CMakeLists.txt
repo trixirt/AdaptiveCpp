@@ -1,7 +1,10 @@
+include(GNUInstallDirs)
 
 add_library(acpp-common SHARED
     filesystem.cpp)
 
+set_target_properties(acpp-common PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION})
+  
 target_include_directories(acpp-common
   PUBLIC
     $<BUILD_INTERFACE:${HIPSYCL_SOURCE_DIR}/include>
@@ -48,5 +51,5 @@ install(TARGETS acpp-common
         EXPORT install_exports
         INCLUDES DESTINATION include/AdaptiveCpp
         RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMKAE_INSTALL_LIBDIR})

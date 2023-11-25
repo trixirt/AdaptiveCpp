@@ -1,3 +1,4 @@
+include(GNUInstallDirs)
 
 set(LLVM_TO_BACKEND_INCLUDE_DIRS 
   ../../../include
@@ -23,6 +24,7 @@ function(create_llvm_based_library)
   add_library(${target} SHARED
     ${sources})
 
+  set_target_properties(${target} PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION})
   target_include_directories(${target} PRIVATE
     ${LLVM_TO_BACKEND_INCLUDE_DIRS})
   
@@ -35,7 +37,7 @@ function(create_llvm_based_library)
   # We need symbolic functions for stdpar
   target_link_libraries(${target} PRIVATE ${HIPSYCL_STDPAR_RT_LINKER_FLAGS})
 
-  install(TARGETS ${target} DESTINATION lib/hipSYCL/llvm-to-backend)
+  install(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endfunction()
 
 function(create_llvm_to_backend_library)
@@ -78,7 +80,7 @@ function(create_llvm_to_backend_tool)
   target_compile_definitions(${target}-tool PRIVATE ${LLVM_DEFINITIONS} -DHIPSYCL_TOOL_COMPONENT)
   target_link_libraries(${target}-tool PRIVATE ${target})
 
-  install(TARGETS ${target}-tool DESTINATION lib/hipSYCL/llvm-to-backend)
+  install(TARGETS ${target}-tool DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL/llvm-to-backend)
 endfunction()
 
 function(add_hipsycl_llvm_backend)
@@ -117,7 +119,7 @@ if(WITH_SSCP_COMPILER)
     if(NOT LLVMSPIRV_BRANCH)
       set(LLVMSPIRV_BRANCH llvm_release_${LLVM_VERSION_MAJOR}0)
     endif()
-    set(LLVMSPIRV_RELATIVE_INSTALLDIR lib/hipSYCL/ext/llvm-spirv)
+    set(LLVMSPIRV_RELATIVE_INSTALLDIR ${CMAKE_INSTALL_LIBDIR}/hipSYCL/ext/llvm-spirv)
     set(LLVMSPIRV_INSTALLDIR ${CMAKE_INSTALL_PREFIX}/${LLVMSPIRV_RELATIVE_INSTALLDIR})
     set(LLVMSPIRV_PATH ${LLVMSPIRV_INSTALLDIR}/bin/llvm-spirv)
     set(LLVMSPIRV_RELATIVE_PATH ${LLVMSPIRV_RELATIVE_INSTALLDIR}/bin/llvm-spirv)

@@ -1,3 +1,4 @@
+include(GNUInstallDirs)
 
 function(libkernel_generate_bitcode_library)
   set(options)
@@ -23,7 +24,7 @@ function(libkernel_generate_bitcode_library)
       DEPENDS ${source}
       VERBATIM)
 
-  install(FILES ${target_output_file} DESTINATION lib/hipSYCL/bitcode)
+  install(FILES ${target_output_file} DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL/bitcode)
 endfunction()
 
 function(libkernel_generate_bitcode_target)
@@ -63,7 +64,7 @@ function(libkernel_generate_bitcode_target)
     DEPENDS ${output_files}
   )
 
-  install(FILES ${linked_output} DESTINATION lib/hipSYCL/bitcode)
+  install(FILES ${linked_output} DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL/bitcode)
 
   add_custom_target(libkernel-sscp-${target} ALL
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

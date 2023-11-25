@@ -40,6 +40,8 @@ add_library(acpp-rt SHARED
   hw_model/memcpy.cpp
   serialization/serialization.cpp)
 
+    set_target_properties(acpp-rt PROPERTIES VERSION ${CMAKE_PROJECT_VERSION} SOVERSION ${CMAKE_PROJECT_VERSION})
+
 target_compile_options(acpp-rt PRIVATE ${HIPSYCL_RT_EXTRA_CXX_FLAGS})
 target_link_libraries(acpp-rt PRIVATE ${HIPSYCL_RT_EXTRA_LINKER_FLAGS} acpp-common Threads::Threads)
 
@@ -82,8 +84,8 @@ install(TARGETS acpp-rt
         EXPORT install_exports
         INCLUDES DESTINATION include/AdaptiveCpp
         RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 
 if(WITH_CUDA_BACKEND)
@@ -97,6 +99,7 @@ if(WITH_CUDA_BACKEND)
     cuda/cuda_hardware_manager.cpp
     cuda/cuda_backend.cpp
     cuda/cuda_code_object.cpp)
+
 
   target_include_directories(rt-backend-cuda PRIVATE
     ${HIPSYCL_SOURCE_DIR}/include
@@ -114,8 +117,8 @@ if(WITH_CUDA_BACKEND)
 
   install(TARGETS rt-backend-cuda
         RUNTIME DESTINATION bin/hipSYCL
-        LIBRARY DESTINATION lib/hipSYCL
-        ARCHIVE DESTINATION lib/hipSYCL)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL)
 endif()
 
 if(WITH_ROCM_BACKEND)
@@ -156,8 +159,8 @@ if(WITH_ROCM_BACKEND)
 
   install(TARGETS rt-backend-hip
         RUNTIME DESTINATION bin/hipSYCL
-        LIBRARY DESTINATION lib/hipSYCL
-        ARCHIVE DESTINATION lib/hipSYCL)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL)
 endif()
 
 if(WITH_LEVEL_ZERO_BACKEND)
@@ -168,7 +171,7 @@ if(WITH_LEVEL_ZERO_BACKEND)
     ze/ze_event.cpp
     ze/ze_queue.cpp
     ze/ze_code_object.cpp)
-  
+
   target_include_directories(rt-backend-ze PRIVATE ${HIPSYCL_SOURCE_DIR}/include)
   target_link_libraries(rt-backend-ze PRIVATE acpp-rt -lze_loader)
 
@@ -181,8 +184,8 @@ if(WITH_LEVEL_ZERO_BACKEND)
   endif()
 
   install(TARGETS rt-backend-ze
-        LIBRARY DESTINATION lib/hipSYCL
-        ARCHIVE DESTINATION lib/hipSYCL)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL)
 endif()
 
 if(WITH_OPENCL_BACKEND)
@@ -237,8 +240,8 @@ if(WITH_OPENCL_BACKEND)
   endif()
 
   install(TARGETS rt-backend-ocl
-        LIBRARY DESTINATION lib/hipSYCL
-        ARCHIVE DESTINATION lib/hipSYCL)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL)
 endif()
 
 if(WITH_CPU_BACKEND)
@@ -279,7 +282,7 @@ if(WITH_CPU_BACKEND)
 
   install(TARGETS rt-backend-omp
       RUNTIME DESTINATION bin/hipSYCL
-      LIBRARY DESTINATION lib/hipSYCL
-      ARCHIVE DESTINATION lib/hipSYCL)
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/hipSYCL)
 endif()
 
